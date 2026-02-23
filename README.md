@@ -1,4 +1,4 @@
-# MindScope AI
+# Multimodal stress detection
 
 Multimodal AI-based stress detection and mental wellness assistant.
 
