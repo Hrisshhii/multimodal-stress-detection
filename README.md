@@ -45,7 +45,7 @@ Multimodal AI-based stress detection and mental wellness assistant.
 ## Step 1: Clone Repository
 
 ```bash
-git clone <repo-url>
+git clone https://github.com/Hrisshhii/multimodal-stress-detection.git
 cd multimodal-stress-detection
 ```
 
