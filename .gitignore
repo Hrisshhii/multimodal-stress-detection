@@ -39,3 +39,21 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# mongodb local data
+/data/
+*.wt
+*.lock
+
+# vscode local settings
+.vscode/settings.json
+.vscode/*.code-workspace
+
+Thumbs.db
+desktop.ini
+
+# datasets
+datasets/
+data/
+*.csv
+*.jsonl
