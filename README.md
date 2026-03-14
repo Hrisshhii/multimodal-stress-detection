@@ -16,7 +16,20 @@ Multimodal AI-based stress detection and mental wellness assistant.
 - Analytics Dashboard
 
 ## Status
-🚧 In Development (Phase 1)
+## Project Status
+
+🚧 Phase 1 — Core Features Development
+
+Completed:
+- Chat interface
+- Emotion detection
+- Stress score analytics
+- Session management
+
+Upcoming:
+- Voice stress detection
+- Facial emotion detection
+- Multimodal fusion model
 
 ---
 
