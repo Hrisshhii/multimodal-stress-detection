@@ -16,7 +16,7 @@ export default function StressMeter({ score }: Props) {
 
       <div className="w-full h-3 bg-gray-700 rounded-full">
         <div
-          className={`h-3 rounded-full ${color}`}
+          className={`h-3 rounded-full ${color} transition-all duration-500`}
           style={{ width: `${percent}%` }}
         />
       </div>

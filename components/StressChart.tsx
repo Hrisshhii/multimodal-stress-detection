@@ -15,7 +15,7 @@ type Props = {
 
 export default function StressChart({ data }: Props) {
   return (
-    <div className="h-52 w-full mt-4">
+    <div className="h-40 w-full mt-4">
       <ResponsiveContainer width="100%" height="100%">
         <LineChart data={data}>
           <XAxis dataKey="time" hide />

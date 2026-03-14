@@ -15,37 +15,49 @@ export default function ChatPage() {
   const [analytics,setAnalytics]=useState<any>(null);
   const [showAnalytics, setShowAnalytics] = useState(false);
 
+  const loadAnalytics = async () => {
+    const res = await fetch("/api/dashboard");
+    const data = await res.json();
+    setAnalytics(data);
+  };
+
   const sendMessage = async () => {
     if (!message.trim()) return;
-
     setMessages((prev) => [...prev, { role: "user", text: message }]);
     setLoading(true);
-
-    const res = await fetch("/api/chat", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ message }),
-    });
-
-    const data = await res.json();
-
-    setMessages((prev) => [
-      ...prev,
-      { role: "ai", text: data.aiReply },
-    ]);
+    try {
+      const res=await fetch("/api/chat",{
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ message }),
+      });
+      const data = await res.json();
+      setMessages((prev) => [
+        ...prev,
+        { role: "ai", text: data.aiReply },
+      ]);
+      await loadAnalytics();
+    }catch(err){
+      console.error(err);
+      setMessages((prev) => [
+        ...prev,
+        { role: "ai", text: "Something went wrong. Please try again." },
+      ]);
+    }
 
     setLoading(false);
     setMessage("");
   };
+
   useEffect(()=>{
     bottomRef.current?.scrollIntoView({behavior:"smooth"});
   },[messages]);
+
   useEffect(() => {
-    fetch("/api/dashboard")
-      .then((res) => res.json())
-      .then((data) => setAnalytics(data));
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    loadAnalytics();
   }, []);
 
   return (
@@ -56,12 +68,23 @@ export default function ChatPage() {
 
       <div className="flex-1 overflow-y-auto border rounded-lg p-4 bg-black chat-scroll">
         {showAnalytics && analytics && (
-          <div className="mb-6">
-            <StressMeter score={analytics.avgStress} />
+          <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
+            <div className="bg-gray-900 p-6 rounded-xl w-200">
+              <h2 className="text-xl mb-4">Stress Analytics</h2>
 
-            <StressChart data={analytics.stressTimeline} />
+              <StressMeter score={analytics.avgStress} />
+              <StressChart data={analytics.stressTimeline} />
+
+              <button
+                className="mt-4 bg-red-500 px-4 py-2 rounded cursor-pointer"
+                onClick={() => setShowAnalytics(false)}
+              >
+                Close
+              </button>
+            </div>
           </div>
         )}
+
         {messages.map((m, i) => (
           <MessageBubble key={i} role={m.role} text={m.text} />
         ))}
