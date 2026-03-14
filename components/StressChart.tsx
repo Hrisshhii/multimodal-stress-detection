@@ -15,12 +15,22 @@ type Props = {
 
 export default function StressChart({ data }: Props) {
   return (
-    <div className="h-52 w-full mt-4">
+    <div className="h-40 w-full mt-4 bg-black/50">
       <ResponsiveContainer width="100%" height="100%">
         <LineChart data={data}>
           <XAxis dataKey="time" hide />
           <YAxis domain={[0, 1]} />
-          <Tooltip />
+          <Tooltip 
+            contentStyle={{
+              backgroundColor:"#111827",
+              border:"1px solid #374151",
+              borderRadius:"8px",
+              color: "#e5e7eb",
+            }}
+            labelStyle={{
+              color: "#9ca3af",
+            }}
+          />
           <Line
             type="monotone"
             dataKey="stress"

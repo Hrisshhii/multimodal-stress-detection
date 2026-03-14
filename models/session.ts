@@ -7,6 +7,11 @@ const SessionSchema = new mongoose.Schema({
     required: true,
   },
 
+  title:{
+    type:String,
+    default: "New Chat",
+  },
+
   startedAt: {
     type: Date,
     default: Date.now,
