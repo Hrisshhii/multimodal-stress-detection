@@ -4,12 +4,15 @@
 import { useEffect, useRef, useState } from "react";
 import MessageBubble from "@/components/MessageBubble";
 import TypingIndicator from "@/components/TypingIndicator";
+import StressMeter from "@/components/StressMeter";
+import StressChart from "@/components/StressChart";
 
 export default function ChatPage() {
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const bottomRef=useRef<HTMLDivElement | null>(null);
+  const [analytics,setAnalytics]=useState<any>(null);
 
   const sendMessage = async () => {
     if (!message.trim()) return;
@@ -38,12 +41,26 @@ export default function ChatPage() {
   useEffect(()=>{
     bottomRef.current?.scrollIntoView({behavior:"smooth"});
   },[messages]);
+  useEffect(() => {
+    fetch("/api/dashboard")
+      .then((res) => res.json())
+      .then((data) => setAnalytics(data));
+  }, []);
 
   return (
-    <div className="max-w-3xl mx-auto h-screen flex flex-col p-6">
-      <h1 className="text-3xl mb-6">MindScope AI</h1>
+    <div className="mx-auto h-screen flex flex-col p-8">
+      <h1 className="text-5xl font-bold mb-6 text-center bg-clip-text text-transparent bg-linear-to-r from-gray-100 to-gray-500">
+        MindScope AI
+      </h1>
 
       <div className="flex-1 overflow-y-auto border rounded-lg p-4 bg-black chat-scroll">
+        {analytics && (
+          <div className="mb-6">
+            <StressMeter score={analytics.avgStress} />
+
+            <StressChart data={analytics.stressTimeline} />
+          </div>
+        )}
         {messages.map((m, i) => (
           <MessageBubble key={i} role={m.role} text={m.text} />
         ))}
