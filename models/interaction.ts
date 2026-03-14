@@ -9,9 +9,10 @@ const InteractionSchema = new mongoose.Schema({
 
   type: {
     type: String,
-    enum: ["text", "voice", "camera"],
+    enum: ["user", "ai"],
     required: true,
   },
+  text: String,
 
   emotion: String,
   sentimentScore: Number,

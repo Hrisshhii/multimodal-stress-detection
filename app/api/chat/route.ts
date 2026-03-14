@@ -21,7 +21,8 @@ export async function POST(req: Request) {
   try {
     await connectDB();
 
-    const { message } = await req.json();
+    const body = await req.json();
+    const { message, sessionId } = body;
 
     // detect emotion
     const emotionResult = await detectEmotionAI(message);
@@ -43,32 +44,51 @@ export async function POST(req: Request) {
       });
     }
 
-    // create session
-    const session = await Session.create({
-      userId: user._id,
-    });
+    let session;
+
+    if (sessionId) {
+      session = await Session.findById(sessionId);
+    } else {
+      session = await Session.create({
+        userId: user._id,
+      });
+    }
+
+    if(session.title==="New Chat"){
+      session.title=message.slice(0,40);
+      await session.save();
+    }
 
     // save interaction
     await Interaction.create({
       sessionId: session._id,
-      type: "text",
+      type: "user",
+      text: message,
       emotion,
       sentimentScore,
       stressScore,
+    });
+
+    await Interaction.create({
+      sessionId: session._id,
+      type: "ai",
+      text: aiReply,
     });
 
     // update analytics
     const analytics = await calculateStressAnalytics(
       user._id.toString()
     );
+    console.log("Chat Request:",{message,sessionId});
+    console.log("Saving interactions");
 
     return NextResponse.json({
       aiReply,
       emotion,
       stressScore,
       analytics,
+      sessionId:session._id,
     });
-
   } catch (error) {
     console.error("Chat API Error:", error);
 
