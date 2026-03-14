@@ -43,7 +43,7 @@ export default function ChatPage() {
     <div className="max-w-3xl mx-auto h-screen flex flex-col p-6">
       <h1 className="text-3xl mb-6">MindScope AI</h1>
 
-      <div className="flex-1 overflow-y-auto border rounded-lg p-4 bg-black">
+      <div className="flex-1 overflow-y-auto border rounded-lg p-4 bg-black chat-scroll">
         {messages.map((m, i) => (
           <MessageBubble key={i} role={m.role} text={m.text} />
         ))}
