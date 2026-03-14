@@ -18,16 +18,6 @@ export default function ChatPage() {
   const [analytics,setAnalytics]=useState<any>(null);
   const [showAnalytics, setShowAnalytics] = useState(false);
 
-  const createNewSession=async()=>{
-    const res=await fetch("/api/session",{
-      method:"POST",
-    });
-    const data=await res.json();
-    setSessions(prev=>[data,...prev]);
-    setActiveSession(data._id);
-    setMessages([]);
-  };
-
   const loadSessions = async () => {
     const res = await fetch("/api/sessions");
     if (!res.ok) {
