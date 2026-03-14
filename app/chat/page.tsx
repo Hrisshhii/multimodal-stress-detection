@@ -151,7 +151,7 @@ export default function ChatPage() {
 
         <div className="flex gap-2 mt-4">
           <input
-            className="border p-3 flex-1 rounded-lg border-white/20"
+            className="border p-3 flex-1 rounded-lg border-white/20 focus:outline-none  focus:border-blue-500 focus:ring-1 focus:ring-blue-500/10 placeholder:text-gray-500"
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             onKeyDown={(e)=>{
