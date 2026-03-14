@@ -31,7 +31,7 @@ export default function ChatSidebar({sessions,activeSession,onSelect,onNew,renam
     };
   },[])
   return (
-    <div className="w-72 bg-linear-to-b from-black via-gray-950 to-black p-4 border-r border-gray-800 flex flex-col">
+    <div className="w-72 bg-linear-to-b from-black via-gray-950 to-black p-4 border-r border-gray-800 flex flex-col" ref={sidebarRef}>
       <button
         className="w-full mb-4 bg-blue-600 hover:bg-blue-500 transition py-2 rounded-lg font-medium cursor-pointer hover:scale-95"
         onClick={onNew}
@@ -46,7 +46,7 @@ export default function ChatSidebar({sessions,activeSession,onSelect,onNew,renam
               activeSession === s._id ? "bg-gray-700" : "hover:bg-gray-800"
             }`}
           >
-            <div ref={sidebarRef} className="flex justify-between items-center">
+            <div className="flex justify-between items-center">
               <p className="text-sm truncate">{s.title || "New Chat"}</p>
               <button onClick={(e) => {
                   e.stopPropagation();
