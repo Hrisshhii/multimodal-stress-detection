@@ -61,7 +61,7 @@ export default function ChatSidebar({sessions,activeSession,onSelect,onNew,renam
               <div className="bg-gray-800 rounded p-2 text-[0.8rem] mt-1 space-y-2">
                 <button
                   className="block w-full hover:text-blue-400 text-center cursor-pointer hover:scale-120 transition"
-                  onClick={(e) => {
+                  onClick={(e)=>{
                     e.stopPropagation();
                     renameChat(s._id);
                   }}
@@ -71,7 +71,7 @@ export default function ChatSidebar({sessions,activeSession,onSelect,onNew,renam
 
                 <button
                   className="block w-full text-center hover:text-red-400 cursor-pointer hover:scale-120 transition"
-                  onClick={(e) => {
+                  onClick={(e)=>{
                     e.stopPropagation();
                     deleteChat(s._id);
                   }}
