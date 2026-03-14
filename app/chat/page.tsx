@@ -112,7 +112,7 @@ export default function ChatPage() {
   };
 
   return (
-    <div className="h-screen flex">
+    <div className="h-screen flex bg-linear-to-bl from-black via-gray-900 to-black">
 
       <ChatSidebar sessions={sessions} activeSession={activeSession} onSelect={id=>{setActiveSession(id);loadMessages(id)}} 
       onNew={()=>{setActiveSession(null);setMessages([]);}} 
@@ -122,17 +122,17 @@ export default function ChatPage() {
         <h1 className="text-5xl font-bold mb-6 text-center bg-clip-text text-transparent bg-linear-to-r from-gray-100 to-gray-500">
           MindScope AI
         </h1>
-        <div className="flex-1 overflow-y-auto border rounded-lg p-4 bg-black chat-scroll">
+        <div className="flex-1 overflow-y-auto border border-white/20 rounded-lg p-4 bg-linear-to-tr from-black via-black/50 to-black chat-scroll">
           {showAnalytics && analytics && (
-            <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
-              <div className="bg-gray-900 p-6 rounded-xl w-200">
-                <h2 className="text-xl mb-4">Stress Analytics</h2>
+            <div className="fixed inset-0 bg-black/75 flex items-center justify-center z-50">
+              <div className="bg-linear-to-tr from-black via-gray-950 to-black  p-6 rounded-xl w-[80%] md:w-[60%]">
+                <h2 className="text-xl mb-4 text-center fot-bold bg-clip-text text-transparent bg-linear-to-r from-gray-100 to-gray-500">Stress Analytics</h2>
 
                 <StressMeter score={analytics.avgStress} />
                 <StressChart data={analytics.stressTimeline} />
 
                 <button
-                  className="mt-4 bg-red-500 px-4 py-2 rounded cursor-pointer"
+                  className="mt-4 bg-red-500 hover:bg-red-500/50 px-4 py-2 rounded cursor-pointer"
                   onClick={() => setShowAnalytics(false)}
                 >
                   Close
@@ -151,7 +151,7 @@ export default function ChatPage() {
 
         <div className="flex gap-2 mt-4">
           <input
-            className="border p-3 flex-1 rounded-lg"
+            className="border p-3 flex-1 rounded-lg border-white/20"
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             onKeyDown={(e)=>{
@@ -160,10 +160,10 @@ export default function ChatPage() {
             placeholder="Tell me how you're feeling..."
           />
 
-          <button className="bg-gray-700 text-white px-4 py-2 rounded-lg cursor-pointer" onClick={() => setShowAnalytics(!showAnalytics)}>📊</button>
+          <button className="bg-gray-700 hover:bg-gray-500 transition text-white px-4 py-2 rounded-lg cursor-pointer" onClick={() => setShowAnalytics(!showAnalytics)}>📊</button>
 
           <button
-            className="bg-blue-500 text-white px-6 py-2 rounded-lg cursor-pointer"
+            className="bg-blue-600 hover:bg-blue-500 transition text-white px-6 py-2 rounded-lg cursor-pointer"
             onClick={sendMessage}
           >
             Send
