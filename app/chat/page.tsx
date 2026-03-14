@@ -13,6 +13,7 @@ export default function ChatPage() {
   const [loading, setLoading] = useState(false);
   const bottomRef=useRef<HTMLDivElement | null>(null);
   const [analytics,setAnalytics]=useState<any>(null);
+  const [showAnalytics, setShowAnalytics] = useState(false);
 
   const sendMessage = async () => {
     if (!message.trim()) return;
@@ -54,7 +55,7 @@ export default function ChatPage() {
       </h1>
 
       <div className="flex-1 overflow-y-auto border rounded-lg p-4 bg-black chat-scroll">
-        {analytics && (
+        {showAnalytics && analytics && (
           <div className="mb-6">
             <StressMeter score={analytics.avgStress} />
 
@@ -80,8 +81,10 @@ export default function ChatPage() {
           placeholder="Tell me how you're feeling..."
         />
 
+        <button className="bg-gray-700 text-white px-4 py-2 rounded-lg cursor-pointer" onClick={() => setShowAnalytics(!showAnalytics)}>📊</button>
+
         <button
-          className="bg-blue-500 text-white px-6 py-2 rounded-lg"
+          className="bg-blue-500 text-white px-6 py-2 rounded-lg cursor-pointer"
           onClick={sendMessage}
         >
           Send
