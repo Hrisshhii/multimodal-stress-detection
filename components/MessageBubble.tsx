@@ -32,9 +32,15 @@ export default function MessageBubble({ role, text }: Props) {
 
   const audioRef=useRef<HTMLAudioElement | null>(null);
 
-  const speak=async()=>{
+  const USE_TTS_API = false; // Set to true to use the TTS API, false to use fallback
+  const speak = async () => {
+    if (!USE_TTS_API) {
+      fallbackSpeak(text);
+      return;
+    }
+
     try {
-      const res=await fetch("/api/tts", {
+      const res = await fetch("/api/tts", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -48,17 +54,17 @@ export default function MessageBubble({ role, text }: Props) {
       }
 
       const blob = await res.blob();
+
       if (!blob || blob.size < 1000) {
         fallbackSpeak(text);
         return;
       }
 
-      const url=URL.createObjectURL(blob);
-      const audio=new Audio(url);
-      audioRef.current=audio;
+      const url = URL.createObjectURL(blob);
+      const audio = new Audio(url);
+      audioRef.current = audio;
 
       await audio.play();
-
     } catch {
       fallbackSpeak(text);
     }
