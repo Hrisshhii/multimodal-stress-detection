@@ -54,12 +54,10 @@ export default function MessageBubble({ role, text }: Props) {
       const url=URL.createObjectURL(blob);
       const audio=new Audio(url);
       audioRef.current=audio;
-
       await audio.play();
-
     } catch(err){
       console.warn("Using fallback voice!");
-      console.error(err);
+      console.log(err);
       fallbackSpeak(text);
     }
   };
