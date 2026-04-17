@@ -25,8 +25,7 @@ export async function calculateStressAnalytics(userId: string) {
 
   validInteractions.forEach((i) => {
     if (!i.emotion) return;
-    emotionCount[i.emotion] =
-      (emotionCount[i.emotion] || 0) + 1;
+    emotionCount[i.emotion] = (emotionCount[i.emotion] || 0) + 1;
   });
 
   const dominantEmotion =

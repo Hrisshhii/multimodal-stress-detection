@@ -10,48 +10,67 @@ type Props = {
 export default function MessageBubble({ role, text }: Props) {
   const isUser=role==="user";
 
+  const fallbackSpeak = (text: string) => {
+    window.speechSynthesis.cancel();
+
+    const speech = new SpeechSynthesisUtterance(text);
+    speech.lang = "en-US";
+
+    const voices = window.speechSynthesis.getVoices();
+
+    // Try better voice
+    speech.voice =
+      voices.find((v) => v.name.includes("Google")) ||
+      voices.find((v) => v.name.includes("Microsoft")) ||
+      voices[0];
+
+    speech.rate = 0.95;
+    speech.pitch = 1;
+
+    window.speechSynthesis.speak(speech);
+  };
+
   const audioRef=useRef<HTMLAudioElement | null>(null);
 
-  const speak = async () => {
-  try {
-    const res = await fetch("/api/tts", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ text }),
-    });
+  const speak=async()=>{
+    try {
+      const res=await fetch("/api/tts", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ text }),
+      });
 
-    if (!res.ok) {
-      const err = await res.json();
-      console.error("TTS error:", err);
-      return;
+      if (!res.ok) {
+        fallbackSpeak(text);
+        return;
+      }
+
+      const blob = await res.blob();
+      if (!blob || blob.size < 1000) {
+        fallbackSpeak(text);
+        return;
+      }
+
+      const url=URL.createObjectURL(blob);
+      const audio=new Audio(url);
+      audioRef.current=audio;
+
+      await audio.play();
+
+    } catch {
+      fallbackSpeak(text);
     }
-
-    const blob = await res.blob();
-
-    console.log("Audio blob:", blob);
-
-    const url = URL.createObjectURL(blob);
-
-    const audio = new Audio(url);
-    audioRef.current = audio;
-
-    await audio.play();
-  } catch (err) {
-    console.error("Playback error:", err);
-  }
-};
+  };
 
   const stop=()=>{
     audioRef.current?.pause();
+    window.speechSynthesis.cancel();
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.25 }}
+    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25 }}
       className={`flex ${isUser ? "justify-end" : "justify-start"} mb-4`}
     >
       <div className="flex flex-col max-w-[65%] group">
@@ -74,17 +93,11 @@ export default function MessageBubble({ role, text }: Props) {
 
         {!isUser && (
           <div className="opacity-0 group-hover:opacity-100 flex gap-3 mt-1 text-xs text-gray-400 transition">
-            <button
-              onClick={speak}
-              className="hover:text-blue-400 transition cursor-pointer"
-            >
+            <button onClick={speak} className="hover:text-blue-400 transition cursor-pointer" >
               🔊 Speak
             </button>
 
-            <button
-              onClick={stop}
-              className="hover:text-red-400 transition cursor-pointer"
-            >
+            <button onClick={stop} className="hover:text-red-400 transition cursor-pointer" >
               ⏹ Stop
             </button>
           </div>

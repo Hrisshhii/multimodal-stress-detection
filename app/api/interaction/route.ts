@@ -12,7 +12,7 @@ export async function POST(req: Request) {
 
   const body = await req.json();
 
-  const { type, emotion, sentimentScore, stressScore } = body;
+  const { type, emotion, sentimentScore, stressScore, tone } = body;
 
   // ---- get or create user ----
   let user = await User.findOne();
@@ -35,6 +35,7 @@ export async function POST(req: Request) {
     emotion,
     sentimentScore,
     stressScore,
+    toneStress: tone?.toneStress || 0,
   });
 
   // ---- AUTO analytics update ----

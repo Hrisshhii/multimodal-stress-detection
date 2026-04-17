@@ -1,3 +1,4 @@
+
 import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/db";
 
@@ -20,9 +21,9 @@ function calculateStress(emotion: string, score: number) {
 export async function POST(req: Request) {
   try {
     await connectDB();
-
+    console.log('ai');
     const body = await req.json();
-    const { message, sessionId } = body;
+    const { message, sessionId, tone } = body;
 
     // detect emotion
     const emotionResult = await detectEmotionAI(message);
@@ -30,7 +31,14 @@ export async function POST(req: Request) {
     const emotion = emotionResult.emotion;
     const sentimentScore = emotionResult.score;
 
-    const stressScore = calculateStress(emotion, sentimentScore);
+    const textScore = calculateStress(emotion, sentimentScore);
+    const toneStress=tone?.toneStress || 0;
+    const finalStress=(textScore*0.7)+(toneStress*0.3);
+    const stressScore=finalStress;
+
+    console.log("Text Stress:", textScore);
+    console.log("Tone Stress:", toneStress);
+    console.log("Final Stress:", stressScore);
 
     // AI response
     const aiReply = await generateResponse(message, emotion);

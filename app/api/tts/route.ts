@@ -10,7 +10,7 @@ export async function POST(req: Request) {
       headers: {
         "xi-api-key": process.env.ELEVENLABS_API_KEY!,
         "Content-Type": "application/json",
-        "Accept": "audio/mpeg", // ✅ IMPORTANT
+        "Accept": "audio/mpeg",
       },
       body: JSON.stringify({
         text,
@@ -24,7 +24,7 @@ export async function POST(req: Request) {
   );
 
   if (!response.ok) {
-    const errorText = await response.text();
+    const errorText=await response.text();
     console.error("TTS API Error:", errorText);
 
     return NextResponse.json(
@@ -33,7 +33,7 @@ export async function POST(req: Request) {
     );
   }
 
-  const audioBuffer = await response.arrayBuffer();
+  const audioBuffer=await response.arrayBuffer();
 
   return new Response(audioBuffer, {
     headers: {

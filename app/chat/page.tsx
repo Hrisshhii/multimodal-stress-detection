@@ -36,7 +36,7 @@ export default function ChatPage() {
     setAnalytics(data);
   };
 
-  const sendMessage = async () => {
+  const sendMessage=async()=>{
     if (!message.trim()) return;
     setMessages((prev) => [...prev, { role: "user", text: message }]);
     setLoading(true);
@@ -58,9 +58,10 @@ export default function ChatPage() {
         { role: "ai", text: data.aiReply },
       ]);
       await loadAnalytics();
+      console.log("SendMessage called");
     }catch(err){
       console.error(err);
-      setMessages((prev) => [
+      setMessages((prev)=>[
         ...prev,
         { role: "ai", text: "Something went wrong. Please try again." },
       ]);
@@ -97,15 +98,15 @@ export default function ChatPage() {
     await loadSessions();
   }
 
-  const renameChat = async (id: string) => {
-    const title = prompt("New chat name");
-    if (!title) return;
-    const res = await fetch(`/api/session/${id}/rename`, {
+  const renameChat=async (id: string) => {
+    const title=prompt("New chat name");
+    if(!title) return;
+    const res=await fetch(`/api/session/${id}/rename`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ title }),
     });
-    const data = await res.json();
+    const data=await res.json();
     if (!res.ok) {
       console.error("Rename failed:", data);
       return;
@@ -114,7 +115,7 @@ export default function ChatPage() {
   };
 
 
-  const sendMessageWithText=async(customText: string)=>{
+  const sendMessageWithText=async(customText: string,tone?:any)=>{
     if (!customText.trim()) return;
     setMessages((prev)=>[...prev,{ role:"user",text:customText}]);
     setLoading(true);
@@ -126,10 +127,11 @@ export default function ChatPage() {
         },
         body: JSON.stringify({
           message: customText,
+          tone,
           sessionId: activeSession || undefined,
         }),
       });
-
+      
       const data=await res.json();
 
       if(!activeSession && data.sessionId){
@@ -149,6 +151,7 @@ export default function ChatPage() {
     }
 
     setLoading(false);
+    console.log("🎤 sendMessageWithText called", customText, tone);
   };
 
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
@@ -191,7 +194,7 @@ export default function ChatPage() {
       const data = await res.json();
 
       if (data.text) {
-        sendMessageWithText(data.text);
+        sendMessageWithText(data.text,data.tone);
       }
     };
 
@@ -235,7 +238,7 @@ export default function ChatPage() {
               <p className="text-sm">Tell me how you&apos;re feeling...</p>
             </div>
           ) : (
-            messages.map((m, i) => (
+            messages.map((m,i)=>(
               <MessageBubble key={i} role={m.role} text={m.text} />
             ))
           )}

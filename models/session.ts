@@ -20,5 +20,4 @@ const SessionSchema = new mongoose.Schema({
   endedAt: Date,
 });
 
-export default mongoose.models.Session ||
-  mongoose.model("Session", SessionSchema);
+export default mongoose.models.Session || mongoose.model("Session", SessionSchema);
