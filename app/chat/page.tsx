@@ -17,6 +17,7 @@ export default function ChatPage() {
   const bottomRef=useRef<HTMLDivElement | null>(null);
   const [analytics,setAnalytics]=useState<any>(null);
   const [showAnalytics, setShowAnalytics] = useState(false);
+  const [recording,setRecording]=useState(false);
 
   const loadSessions = async () => {
     const res = await fetch("/api/sessions");
@@ -111,6 +112,106 @@ export default function ChatPage() {
     await loadSessions();
   };
 
+
+  const sendMessageWithText=async(customText: string)=>{
+    if (!customText.trim()) return;
+    setMessages((prev)=>[...prev,{ role:"user",text:customText}]);
+    setLoading(true);
+    try {
+      const res=await fetch("/api/chat",{
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          message: customText,
+          sessionId: activeSession || undefined,
+        }),
+      });
+
+      const data=await res.json();
+
+      if(!activeSession && data.sessionId){
+        setActiveSession(data.sessionId);
+      }
+
+      await loadSessions();
+
+      setMessages((prev)=>[
+        ...prev,
+        { role: "ai", text: data.aiReply },
+      ]);
+      speak(data.aiReply);
+
+      await loadAnalytics();
+    } catch(err){
+      console.error(err);
+    }
+
+    setLoading(false);
+  };
+
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const audioChunksRef = useRef<Blob[]>([]);
+
+  const startRecording = async () => {
+    window.speechSynthesis.cancel();
+
+    if(recording){
+      mediaRecorderRef.current?.stop();
+      setRecording(false);
+      return;
+    }
+
+    if (recording) {
+      mediaRecorderRef.current?.stop();
+      setRecording(false);
+      return;
+    }
+
+    const stream = await navigator.mediaDevices.getUserMedia({
+      audio: true,
+    });
+
+    const mediaRecorder = new MediaRecorder(stream);
+    mediaRecorderRef.current = mediaRecorder;
+    audioChunksRef.current = [];
+
+    mediaRecorder.ondataavailable = (e) => {
+      audioChunksRef.current.push(e.data);
+    };
+
+    mediaRecorder.onstop = async () => {
+      const audioBlob = new Blob(audioChunksRef.current, {
+        type: "audio/webm",
+      });
+
+      const formData = new FormData();
+      formData.append("audio", audioBlob);
+
+      const res = await fetch("/api/audio", {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await res.json();
+
+      if (data.text) {
+        sendMessageWithText(data.text);
+      }
+    };
+
+    mediaRecorder.start();
+    setRecording(true);
+  };
+
+  const speak=(text:string)=>{
+    window.speechSynthesis.cancel();
+    const speech=new SpeechSynthesisUtterance(text);
+    speech.lang="en-US";
+    window.speechSynthesis.speak(speech);
+  };
+
   return (
     <div className="h-screen flex bg-linear-to-bl from-black via-gray-900 to-black">
 
@@ -155,12 +256,25 @@ export default function ChatPage() {
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             onKeyDown={(e)=>{
-              if(e.key==="Enter") sendMessage();
+              if(e.key==="Enter"){
+                if(recording){
+                  mediaRecorderRef.current?.stop();
+                  setRecording(false);
+                }
+                window.speechSynthesis.cancel();
+                sendMessage();
+              }
             }}
             placeholder="Tell me how you're feeling..."
           />
 
           <button className="bg-gray-700 hover:bg-gray-500 transition text-white px-4 py-2 rounded-lg cursor-pointer" onClick={() => setShowAnalytics(!showAnalytics)}>📊</button>
+
+          <button className={`bg-gray-700 hover:bg-gray-500 transition text-white px-4 py-2 rounded-lg cursor-pointer
+              ${recording?"bg-red-500":"bg-green-600"}
+            `} onClick={startRecording} >
+              🎤
+            </button>
 
           <button
             className="bg-blue-600 hover:bg-blue-500 transition text-white px-6 py-2 rounded-lg cursor-pointer"
