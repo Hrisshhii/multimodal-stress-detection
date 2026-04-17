@@ -36,7 +36,7 @@ export default function ChatPage() {
     setAnalytics(data);
   };
 
-  const sendMessage = async () => {
+  const sendMessage=async()=>{
     if (!message.trim()) return;
     setMessages((prev) => [...prev, { role: "user", text: message }]);
     setLoading(true);
@@ -60,7 +60,7 @@ export default function ChatPage() {
       await loadAnalytics();
     }catch(err){
       console.error(err);
-      setMessages((prev) => [
+      setMessages((prev)=>[
         ...prev,
         { role: "ai", text: "Something went wrong. Please try again." },
       ]);
@@ -97,15 +97,15 @@ export default function ChatPage() {
     await loadSessions();
   }
 
-  const renameChat = async (id: string) => {
-    const title = prompt("New chat name");
-    if (!title) return;
-    const res = await fetch(`/api/session/${id}/rename`, {
+  const renameChat=async (id: string) => {
+    const title=prompt("New chat name");
+    if(!title) return;
+    const res=await fetch(`/api/session/${id}/rename`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ title }),
     });
-    const data = await res.json();
+    const data=await res.json();
     if (!res.ok) {
       console.error("Rename failed:", data);
       return;
@@ -235,7 +235,7 @@ export default function ChatPage() {
               <p className="text-sm">Tell me how you&apos;re feeling...</p>
             </div>
           ) : (
-            messages.map((m, i) => (
+            messages.map((m,i)=>(
               <MessageBubble key={i} role={m.role} text={m.text} />
             ))
           )}

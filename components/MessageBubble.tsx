@@ -68,10 +68,7 @@ export default function MessageBubble({ role, text }: Props) {
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.25 }}
+    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25 }}
       className={`flex ${isUser ? "justify-end" : "justify-start"} mb-4`}
     >
       <div className="flex flex-col max-w-[65%] group">
@@ -94,17 +91,11 @@ export default function MessageBubble({ role, text }: Props) {
 
         {!isUser && (
           <div className="opacity-0 group-hover:opacity-100 flex gap-3 mt-1 text-xs text-gray-400 transition">
-            <button
-              onClick={speak}
-              className="hover:text-blue-400 transition cursor-pointer"
-            >
+            <button onClick={speak} className="hover:text-blue-400 transition cursor-pointer" >
               🔊 Speak
             </button>
 
-            <button
-              onClick={stop}
-              className="hover:text-red-400 transition cursor-pointer"
-            >
+            <button onClick={stop} className="hover:text-red-400 transition cursor-pointer" >
               ⏹ Stop
             </button>
           </div>
