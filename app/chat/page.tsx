@@ -205,17 +205,6 @@ export default function ChatPage() {
     setRecording(true);
   };
 
-  const speak=(text:string)=>{
-    window.speechSynthesis.cancel();
-    const speech=new SpeechSynthesisUtterance(text);
-    speech.lang="en-US";
-    const voices=window.speechSynthesis.getVoices();
-    speech.voice=voices.find(v => v.name.includes("Google")) || voices[0];
-    speech.rate=0.95;
-    speech.pitch=1;
-    window.speechSynthesis.speak(speech);
-  };
-
   return (
     <div className="h-screen flex bg-linear-to-bl from-black via-gray-900 to-black">
 
