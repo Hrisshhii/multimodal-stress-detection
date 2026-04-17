@@ -10,41 +10,62 @@ type Props = {
 export default function MessageBubble({ role, text }: Props) {
   const isUser=role==="user";
 
+  const fallbackSpeak = (text: string) => {
+    window.speechSynthesis.cancel();
+
+    const speech = new SpeechSynthesisUtterance(text);
+    speech.lang = "en-US";
+
+    const voices = window.speechSynthesis.getVoices();
+
+    // Try better voice
+    speech.voice =
+      voices.find((v) => v.name.includes("Google")) ||
+      voices.find((v) => v.name.includes("Microsoft")) ||
+      voices[0];
+
+    speech.rate = 0.95;
+    speech.pitch = 1;
+
+    window.speechSynthesis.speak(speech);
+  };
+
   const audioRef=useRef<HTMLAudioElement | null>(null);
 
-  const speak = async () => {
-  try {
-    const res = await fetch("/api/tts", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ text }),
-    });
+  const speak=async()=>{
+    try {
+      const res=await fetch("/api/tts", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ text }),
+      });
 
-    if (!res.ok) {
-      const err = await res.json();
-      console.error("TTS error:", err);
-      return;
+      if(!res.ok){
+        throw new Error("TTS failed");
+      }
+
+      const blob=await res.blob();
+      if (blob.size<1000) {
+        throw new Error("Invalid audio");
+      }
+
+      const url=URL.createObjectURL(blob);
+      const audio=new Audio(url);
+      audioRef.current=audio;
+
+      await audio.play();
+
+    } catch(err){
+      console.warn("Using fallback voice");
+      fallbackSpeak(text);
     }
-
-    const blob = await res.blob();
-
-    console.log("Audio blob:", blob);
-
-    const url = URL.createObjectURL(blob);
-
-    const audio = new Audio(url);
-    audioRef.current = audio;
-
-    await audio.play();
-  } catch (err) {
-    console.error("Playback error:", err);
-  }
-};
+  };
 
   const stop=()=>{
     audioRef.current?.pause();
+    window.speechSynthesis.cancel();
   };
 
   return (
