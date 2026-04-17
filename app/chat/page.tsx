@@ -58,6 +58,7 @@ export default function ChatPage() {
         { role: "ai", text: data.aiReply },
       ]);
       await loadAnalytics();
+      console.log("SendMessage called");
     }catch(err){
       console.error(err);
       setMessages((prev)=>[
@@ -114,7 +115,7 @@ export default function ChatPage() {
   };
 
 
-  const sendMessageWithText=async(customText: string)=>{
+  const sendMessageWithText=async(customText: string,tone?:any)=>{
     if (!customText.trim()) return;
     setMessages((prev)=>[...prev,{ role:"user",text:customText}]);
     setLoading(true);
@@ -126,10 +127,11 @@ export default function ChatPage() {
         },
         body: JSON.stringify({
           message: customText,
+          tone,
           sessionId: activeSession || undefined,
         }),
       });
-
+      
       const data=await res.json();
 
       if(!activeSession && data.sessionId){
@@ -149,6 +151,7 @@ export default function ChatPage() {
     }
 
     setLoading(false);
+    console.log("🎤 sendMessageWithText called", customText, tone);
   };
 
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
@@ -191,7 +194,7 @@ export default function ChatPage() {
       const data = await res.json();
 
       if (data.text) {
-        sendMessageWithText(data.text);
+        sendMessageWithText(data.text,data.tone);
       }
     };
 

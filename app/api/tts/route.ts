@@ -33,7 +33,7 @@ export async function POST(req: Request) {
     );
   }
 
-  const audioBuffer = await response.arrayBuffer();
+  const audioBuffer=await response.arrayBuffer();
 
   return new Response(audioBuffer, {
     headers: {

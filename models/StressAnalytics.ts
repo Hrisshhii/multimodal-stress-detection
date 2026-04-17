@@ -16,5 +16,4 @@ const StressAnalyticsSchema = new mongoose.Schema({
   },
 });
 
-export default mongoose.models.StressAnalytics ||
-  mongoose.model("StressAnalytics", StressAnalyticsSchema);
+export default mongoose.models.StressAnalytics || mongoose.model("StressAnalytics", StressAnalyticsSchema);

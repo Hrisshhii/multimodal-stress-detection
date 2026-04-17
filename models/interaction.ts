@@ -24,5 +24,4 @@ const InteractionSchema = new mongoose.Schema({
   },
 });
 
-export default mongoose.models.Interaction ||
-  mongoose.model("Interaction", InteractionSchema);
+export default mongoose.models.Interaction || mongoose.model("Interaction", InteractionSchema);

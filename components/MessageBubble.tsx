@@ -42,22 +42,24 @@ export default function MessageBubble({ role, text }: Props) {
         body: JSON.stringify({ text }),
       });
 
-      if(!res.ok){
-        throw new Error("TTS failed");
+      if (!res.ok) {
+        fallbackSpeak(text);
+        return;
       }
 
-      const blob=await res.blob();
-      if (blob.size<1000) {
-        throw new Error("Invalid audio");
+      const blob = await res.blob();
+      if (!blob || blob.size < 1000) {
+        fallbackSpeak(text);
+        return;
       }
 
       const url=URL.createObjectURL(blob);
       const audio=new Audio(url);
       audioRef.current=audio;
+
       await audio.play();
-    } catch(err){
-      console.warn("Using fallback voice!");
-      console.log(err);
+
+    } catch {
       fallbackSpeak(text);
     }
   };

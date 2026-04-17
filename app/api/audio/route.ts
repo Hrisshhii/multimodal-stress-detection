@@ -1,3 +1,6 @@
+export const runtime = "nodejs";
+
+import { analyzeAudio } from "@/lib/audioAnalysis";
 import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
@@ -8,6 +11,9 @@ export async function POST(req: Request) {
     const groqForm = new FormData();
     groqForm.append("file", file, "audio.webm");
     groqForm.append("model", "whisper-large-v3");
+
+    const buffer=Buffer.from(await file.arrayBuffer());
+    const tone=analyzeAudio(buffer);
 
     const response=await fetch(
       "https://api.groq.com/openai/v1/audio/transcriptions",
@@ -21,9 +27,12 @@ export async function POST(req: Request) {
     );
 
     const data=await response.json();
+    console.log("🎤 AUDIO API HIT");
+    console.log("Tone:", tone);
 
     return NextResponse.json({
-      text: data.text || "",
+      text: data.text,
+      tone,
     });
 
   }catch(error){
