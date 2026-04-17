@@ -88,6 +88,7 @@ export default function ChatPage() {
   }, []);
 
   const deleteChat = async (id:string)=>{
+    window.speechSynthesis.cancel();
     await fetch(`/api/session/${id}/delete`,{method:"DELETE"});
     if (activeSession === id) {
       setActiveSession(null);
@@ -141,7 +142,6 @@ export default function ChatPage() {
         ...prev,
         { role: "ai", text: data.aiReply },
       ]);
-      speak(data.aiReply);
 
       await loadAnalytics();
     } catch(err){
@@ -209,6 +209,10 @@ export default function ChatPage() {
     window.speechSynthesis.cancel();
     const speech=new SpeechSynthesisUtterance(text);
     speech.lang="en-US";
+    const voices=window.speechSynthesis.getVoices();
+    speech.voice=voices.find(v => v.name.includes("Google")) || voices[0];
+    speech.rate=0.95;
+    speech.pitch=1;
     window.speechSynthesis.speak(speech);
   };
 

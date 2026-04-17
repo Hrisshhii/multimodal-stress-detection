@@ -7,21 +7,65 @@ type Props = {
 };
 
 export default function MessageBubble({ role, text }: Props) {
-  const isUser = role === "user";
+  const isUser=role==="user";
+
+  const speak=()=>{
+    window.speechSynthesis.cancel();
+    const speech=new SpeechSynthesisUtterance(text);
+    speech.lang="en-US";
+
+    const voices=window.speechSynthesis.getVoices();
+    speech.voice=voices.find((v) => v.name.includes("Google")) || voices[0];
+
+    speech.rate=0.95;
+    speech.pitch=1;
+    window.speechSynthesis.speak(speech);
+  };
+
+  const stop = () => {
+    window.speechSynthesis.cancel();
+  };
 
   return (
-    <motion.div initial={{opacity:0,y:10}} animate={{opacity:1,y:0}} transition={{duration:0.25}} 
-    className={`flex ${isUser ? "justify-end" : "justify-start"} mb-4`}>
-      <div
-        className={`max-w-[65%] p-3 rounded-lg  ${
-          isUser ? "bg-linear-to-br from-blue-600 via-blue-500 to-blue-600 text-white" : "bg-linear-to-br from-gray-800 via-gray-700 to-gray-800 text-gray-100"
-        }`}
-      >
-        {isUser ? (
-          text
-        ) : (
-          <div className="prose prose-invert">
-            <ReactMarkdown>{text}</ReactMarkdown>
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.25 }}
+      className={`flex ${isUser ? "justify-end" : "justify-start"} mb-4`}
+    >
+      <div className="flex flex-col max-w-[65%]">
+        
+        <div
+          className={`p-3 rounded-lg ${
+            isUser
+              ? "bg-linear-to-br from-blue-600 via-blue-500 to-blue-600 text-white"
+              : "bg-linear-to-br from-gray-800 via-gray-700 to-gray-800 text-gray-100"
+          }`}
+        >
+          {isUser ? (
+            text
+          ) : (
+            <div className="prose prose-invert">
+              <ReactMarkdown>{text}</ReactMarkdown>
+            </div>
+          )}
+        </div>
+
+        {!isUser && (
+          <div className="flex gap-3 mt-1 text-xs text-gray-400">
+            <button
+              onClick={speak}
+              className="hover:text-blue-400 transition cursor-pointer"
+            >
+              🔊 Speak
+            </button>
+
+            <button
+              onClick={stop}
+              className="hover:text-red-400 transition cursor-pointer"
+            >
+              ⏹ Stop
+            </button>
           </div>
         )}
       </div>
