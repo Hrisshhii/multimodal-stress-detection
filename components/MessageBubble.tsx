@@ -58,7 +58,8 @@ export default function MessageBubble({ role, text }: Props) {
       await audio.play();
 
     } catch(err){
-      console.warn("Using fallback voice");
+      console.warn("Using fallback voice!");
+      console.error(err);
       fallbackSpeak(text);
     }
   };
