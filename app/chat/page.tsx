@@ -229,18 +229,24 @@ export default function ChatPage() {
             </div>
           )}
 
-          {messages.map((m, i) => (
-            <MessageBubble key={i} role={m.role} text={m.text} />
-          ))}
+          {messages.length === 0 ? (
+            <div className="h-full flex flex-col items-center justify-center text-gray-500">
+              <h2 className="text-xl mb-2">Start a conversation</h2>
+              <p className="text-sm">Tell me how you&apos;re feeling...</p>
+            </div>
+          ) : (
+            messages.map((m, i) => (
+              <MessageBubble key={i} role={m.role} text={m.text} />
+            ))
+          )}
 
           {loading && <TypingIndicator />}
           <div ref={bottomRef} />
         </div>
 
         <div className="flex gap-2 mt-4">
-          <input
+          <input value={message} placeholder="Tell me how you're feeling..."
             className="border p-3 flex-1 rounded-lg border-white/20 focus:outline-none  focus:border-blue-500 focus:ring-1 focus:ring-blue-500/10 placeholder:text-gray-500"
-            value={message}
             onChange={(e) => setMessage(e.target.value)}
             onKeyDown={(e)=>{
               if(e.key==="Enter"){
@@ -252,13 +258,13 @@ export default function ChatPage() {
                 sendMessage();
               }
             }}
-            placeholder="Tell me how you're feeling..."
+            
           />
 
           <button className="bg-gray-700 hover:bg-gray-500 transition text-white px-4 py-2 rounded-lg cursor-pointer" onClick={() => setShowAnalytics(!showAnalytics)}>📊</button>
 
           <button className={`bg-gray-700 hover:bg-gray-500 transition text-white px-4 py-2 rounded-lg cursor-pointer
-              ${recording?"bg-red-500":"bg-green-600"}
+              ${recording?"bg-red-500 animate-pulse":"bg-green-600"}
             `} onClick={startRecording} >
               🎤
             </button>
