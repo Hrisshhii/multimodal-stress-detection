@@ -1,5 +1,6 @@
 import ReactMarkdown from "react-markdown";
 import { motion } from "framer-motion";
+import { useRef } from "react";
 
 type Props = {
   role: "user" | "ai";
@@ -9,21 +10,41 @@ type Props = {
 export default function MessageBubble({ role, text }: Props) {
   const isUser=role==="user";
 
-  const speak=()=>{
-    window.speechSynthesis.cancel();
-    const speech=new SpeechSynthesisUtterance(text);
-    speech.lang="en-US";
+  const audioRef=useRef<HTMLAudioElement | null>(null);
 
-    const voices=window.speechSynthesis.getVoices();
-    speech.voice=voices.find((v) => v.name.includes("Google")) || voices[0];
+  const speak = async () => {
+  try {
+    const res = await fetch("/api/tts", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ text }),
+    });
 
-    speech.rate=0.95;
-    speech.pitch=1;
-    window.speechSynthesis.speak(speech);
-  };
+    if (!res.ok) {
+      const err = await res.json();
+      console.error("TTS error:", err);
+      return;
+    }
 
-  const stop = () => {
-    window.speechSynthesis.cancel();
+    const blob = await res.blob();
+
+    console.log("Audio blob:", blob);
+
+    const url = URL.createObjectURL(blob);
+
+    const audio = new Audio(url);
+    audioRef.current = audio;
+
+    await audio.play();
+  } catch (err) {
+    console.error("Playback error:", err);
+  }
+};
+
+  const stop=()=>{
+    audioRef.current?.pause();
   };
 
   return (
