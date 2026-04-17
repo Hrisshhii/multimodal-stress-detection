@@ -33,7 +33,7 @@ export default function MessageBubble({ role, text }: Props) {
       transition={{ duration: 0.25 }}
       className={`flex ${isUser ? "justify-end" : "justify-start"} mb-4`}
     >
-      <div className="flex flex-col max-w-[65%]">
+      <div className="flex flex-col max-w-[65%] group">
         
         <div
           className={`p-3 rounded-lg ${
@@ -52,7 +52,7 @@ export default function MessageBubble({ role, text }: Props) {
         </div>
 
         {!isUser && (
-          <div className="flex gap-3 mt-1 text-xs text-gray-400">
+          <div className="opacity-0 group-hover:opacity-100 flex gap-3 mt-1 text-xs text-gray-400 transition">
             <button
               onClick={speak}
               className="hover:text-blue-400 transition cursor-pointer"
