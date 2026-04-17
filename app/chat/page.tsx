@@ -157,12 +157,6 @@ export default function ChatPage() {
   const startRecording = async () => {
     window.speechSynthesis.cancel();
 
-    if(recording){
-      mediaRecorderRef.current?.stop();
-      setRecording(false);
-      return;
-    }
-
     if (recording) {
       mediaRecorderRef.current?.stop();
       setRecording(false);
