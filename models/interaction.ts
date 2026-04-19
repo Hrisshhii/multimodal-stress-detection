@@ -9,7 +9,7 @@ const InteractionSchema = new mongoose.Schema({
 
   type: {
     type: String,
-    enum: ["user", "ai"],
+    enum: ["user", "ai", "video", "audio", "text"],
     required: true,
   },
   text: String,

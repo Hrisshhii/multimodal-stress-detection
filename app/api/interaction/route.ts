@@ -8,10 +8,20 @@ import Interaction from "@/models/interaction";
 import { calculateStressAnalytics } from "@/lib/analytics";
 
 export async function POST(req: Request) {
-  await connectDB();
+  await connectDB(); // ⚠️ you also forgot this
 
-  const body = await req.json();
+  let body;
 
+  try {
+    body = await req.json();
+  } catch {
+    return NextResponse.json(
+      { message: "Invalid JSON body" },
+      { status: 400 }
+    );
+  }
+
+  // ✅ FIX: extract values from body
   const { type, emotion, sentimentScore, stressScore, tone } = body;
 
   // ---- get or create user ----
@@ -19,14 +29,18 @@ export async function POST(req: Request) {
 
   if (!user) {
     user = await User.create({
-      anonymousId: crypto.randomUUID(),
+      anonymousId: "default_user",
     });
   }
 
   // ---- create session ----
-  const session = await Session.create({
-    userId: user._id,
-  });
+  let session = await Session.findOne({ userId: user._id });
+
+  if (!session) {
+    session = await Session.create({
+      userId: user._id,
+    });
+  }
 
   // ---- save interaction ----
   const interaction = await Interaction.create({

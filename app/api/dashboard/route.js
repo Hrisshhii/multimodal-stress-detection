@@ -9,9 +9,12 @@ import Session from "@/models/session";
 export async function GET() {
   await connectDB();
 
-  const user = await User.findOne();
-  if (!user)
-    return NextResponse.json({ message: "No user found" });
+  let user = await User.findOne();
+  if (!user) {
+  user = await User.create({
+    anonymousId: "default_user",
+  });
+}
 
   // latest analytics
   const analytics = await StressAnalytics
@@ -33,9 +36,9 @@ export async function GET() {
   }));
 
   return NextResponse.json({
-    avgStress: analytics?.avgStressScore || 0,
-    dominantEmotion: analytics?.dominantEmotion || "neutral",
-    interactionCount: analytics?.interactionCount || 0,
-    stressTimeline,
-  });
+  avgStress: analytics?.avgStressScore || 0,
+  dominantEmotion: analytics?.dominantEmotion || "neutral",
+  interactionCount: analytics?.interactionCount || 0,
+  stressTimeline: stressTimeline || [],
+});
 }
